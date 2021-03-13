@@ -16,7 +16,7 @@ To support another dumps format fill free to fork repo and change restore comman
 ###### To create docker image:
 Run `./build_postgres_docker_with_dump.sh <database_name> <postgres_user> <postgres_password> <dump_file> <out_put_image_name:tag> 
 
-Example ./build_postgres_docker_with_dump.sh sample_db postgres postgres ./dumps/postgres_qa.dump qa_image
+Example ./build_postgres_docker_with_dump.sh sample_db postgres postgres $PWD/dumps/postgres_qa.dump qa_image
 
 
 where 
@@ -29,7 +29,9 @@ where
 
 ###### To instantiate docker image:
 
-Run `docker run -d --name <container-name> -p <port-number>:5432 <out_put_image_name:tag>`
+Run `docker run -d --name <container-name> -p <port-number>:5432 -e PGDATA=/data  <out_put_image_name:tag>`
+
+!!!!! don't forget to specify -e PGDATA=/data because db data is stored there.
 
 where
 
