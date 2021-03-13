@@ -13,29 +13,32 @@ Script expects dump create with pg_dump and archived -Fc see example.
 
 To support another dumps format fill free to fork repo and change restore command in `build_postgres_docker_with_dump.sh`
 
-###### To create docker image:
-Run `./build_postgres_docker_with_dump.sh <database_name> <postgres_user> <postgres_password> <dump_file> <out_put_image_name:tag> 
+`docker run -d --name restored_from_dump_db -e PGDATA=/data -e POSTGRES_DB=<postgres_db> -e POSTGRES_USER=<postgres_user>  -e POSTGRES_PASSWORD=<postgres_password> -v <path_to_dump>:/dump -v $PWD/initScript:/docker-entrypoint-initdb.d postgres:latest`
 
-Example ./build_postgres_docker_with_dump.sh sample_db postgres postgres ./dumps/postgres_qa.dump qa_image
+where
+* <postgres_db> - name of db to create
+* <postgres_user> - db user to create 
+* <postgres_password> - password to db user
+* <path_to_dump> - absolute path to dump e.g. $PWD/dumps/postgres_qa.dump
 
+example:`docker run -d --name restored_from_dump_db -e PGDATA=/data -e POSTGRES_DB=testdb  -e POSTGRES_PASSWORD=postgres -v 
+$PWD/dumps/postgres_qa.dump:/dump/dump -v $PWD/initScript:/docker-entrypoint-initdb.d postgres:latest`
 
-where 
+you should wait until a db is restored :(  this will show the logs `docker container logs restored_from_dump_db`.
 
-* `database_name` db name to create 
-* `postgres_user` postgres user to create
-* `postgres_password` password of postgres user
-* `dump_file` path to dump file
-* `out_put_image_name:tag` name and tag of output docker
+then commit it to neq image. 
+
+`docker commit "$(docker ps -aqf "name=restored_from_dump_db")" <output_image_name>`
 
 ###### To instantiate docker image:
 
-Run `docker run -d --name <container-name> -p <port-number>:5432 <out_put_image_name:tag>`
+Run `docker run -d --name <container-name> -p <port-number>:5432 <output_image_name>`
 
 where
 
 * `container-name` name of container after instantiate
 * `port-number` port on a local machine to bind to postgres port on docker
-* `out_put_image_name:tag` name and tag of output docker 
+* `out_put_image_name` name and tag of output docker 
 
 ###### To stop running container:
 
