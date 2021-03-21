@@ -20,7 +20,7 @@ docker run -d --name postgres_with_db \
 sleep 5
 
 echo "Restore dump"
-docker exec postgres_with_db pg_restore -d "$POSTGRES_DB" -U "$POSTGRES_USER" --clean --if-exists -Fc --no-owner /dump/dump
+docker exec postgres_with_db psql -d "$POSTGRES_DB" -U "$POSTGRES_USER" -f /dump/dump
 
 echo "Database restored successfully"
 echo "Building new image $IMAGE_NAME with restored db"

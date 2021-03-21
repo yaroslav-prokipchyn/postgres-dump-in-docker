@@ -14,7 +14,12 @@ Script expects dump create with pg_dump and archived -Fc see example.
 To support another dumps format fill free to fork repo and change restore command in `build_postgres_docker_with_dump.sh`
 
 ###### To create docker image:
-Run `./build_postgres_docker_with_dump.sh <database_name> <postgres_user> <postgres_password> <dump_file> <out_put_image_name:tag> 
+Run `./build_postgres_docker_with_dump.sh <database_name> <postgres_user> <postgres_password> <dump_file> <out_put_image_name:tag>` 
+
+
+**don't forget to change/set user in database it in sql dump**
+
+`sed -i 's/aptible/postgres/g;s/singer/postgres/g;s/CREATE SCHEMA directsource;/CREATE SCHEMA directsource;CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA schema_name;/g' ./postgresql-staging.dump `
 
 Example ./build_postgres_docker_with_dump.sh sample_db postgres postgres $PWD/dumps/postgres_qa.dump qa_image
 
